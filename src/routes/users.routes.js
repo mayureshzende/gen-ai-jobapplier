@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { registerUser } from "../controller/user.controller.js";
+import {
+  getMe,
+  loginUser,
+  logoutUser,
+  registerUser,
+} from "../controller/user.controller.js";
+import authUserMiddleware from "../middleware/auth.middleware.js";
 const authRouter = Router();
 
 /**
@@ -8,5 +14,26 @@ const authRouter = Router();
  * @access public
  */
 authRouter.post("/register", registerUser);
+
+/**
+ * @route POST api/auth/login
+ * @description to login the user
+ * @access public
+ */
+authRouter.post("/login", loginUser);
+
+/**
+ * @route POST api/auth/logout
+ * @description to logout the user
+ * @access public
+ */
+authRouter.post("/logout", logoutUser);
+
+/**
+ * @route POST api/auth/getMe
+ * @description this in the route to get the user details from the token
+ * @access private
+ */
+authRouter.post("/getMe", authUserMiddleware, getMe);
 
 export default authRouter;
