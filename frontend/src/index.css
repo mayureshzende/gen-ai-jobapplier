@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+@theme {
+  /* 1. Define your custom background color variable */
+  --color-brand-bg: #1f232a;
+  --color-text-primary: cornsilk;
+}
+
+@layer base {
+  /* 2. Apply it globally to the body element */
+  body {
+    background-color: var(--color-brand-bg);
+    color: var(--color-text-primary);
+  }
+}

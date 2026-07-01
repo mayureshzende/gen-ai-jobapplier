@@ -54,10 +54,10 @@ const generateResumePDF = async (resumeJsonContent) => {
       format: "A4",
       printBackground: true, // Crucial for CSS backgrounds/colors to show up
       margin: {
-        top: "15mm",
-        bottom: "15mm",
-        left: "15mm",
-        right: "15mm",
+        top: "2mm", // Try 0mm to see if the "odd space" goes away
+        bottom: "2mm",
+        left: "3mm",
+        right: "3mm",
       },
     });
 
