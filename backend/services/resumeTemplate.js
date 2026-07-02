@@ -106,7 +106,7 @@ function renderExperience(experience = []) {
           <span class="entry-right"><em>${escapeHtml(job.dates)}</em></span>
         </div>
         <ul class="bullets">
-          ${(job.bullets || []).map((b) => `<li>${inlineFormat(b)}</li>`).join("")}
+          ${(job.bullets || []).map((b) => `<li><span class="bullet-dot">&bull;</span><span class="bullet-text">${inlineFormat(b)}</span></li>`).join("")}
         </ul>
       </div>`,
     )
@@ -119,9 +119,9 @@ function renderProjects(projects = []) {
   const items = projects
     .map(
       (p) =>
-        `<li><strong>${escapeHtml(p.name)}</strong> &mdash; ${inlineFormat(p.description)}${
+        `<li><span class="bullet-dot">&bull;</span><span class="bullet-text"><strong>${escapeHtml(p.name)}</strong> &mdash; ${inlineFormat(p.description)}${
           p.link ? ` <a href="${escapeHtml(p.link)}">GitHub</a>` : ""
-        }</li>`,
+        }</span></li>`,
     )
     .join("");
   return section("Projects", `<ul class="bullets">${items}</ul>`);
@@ -151,7 +151,7 @@ function renderSimpleList(title, items = []) {
   if (!items.length) return "";
   return section(
     title,
-    `<ul class="bullets">${items.map((i) => `<li>${inlineFormat(i)}</li>`).join("")}</ul>`,
+    `<ul class="bullets">${items.map((i) => `<li><span class="bullet-dot">&bull;</span><span class="bullet-text">${inlineFormat(i)}</span></li>`).join("")}</ul>`,
   );
 }
 
@@ -232,18 +232,21 @@ function buildResumeHTML(data) {
   }
   .entry-subrow { font-size: 9.5pt; color: ${COLORS.subtext}; break-after: avoid; }
   .entry-left { text-align: left; }
-  .entry-right { text-align: right; white-space: nowrap; }
+  .entry-right { text-align: right; white-space: nowrap; padding-right: 3px; }
 
-  ul.bullets { margin: 3px 0 0; padding-left: 14px; }
+  ul.bullets { list-style: none; margin: 3px 0 0; padding-left: 6px; }
   ul.bullets li {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
     margin-bottom: 3px;
-    padding-left: 2px;
     break-inside: avoid;
     orphans: 2;
     widows: 2;
   }
   ul.bullets li:last-child { margin-bottom: 0; }
-  ul.bullets li::marker { color: ${COLORS.airforceblue}; }
+  ul.bullets .bullet-dot { flex: 0 0 auto; color: ${COLORS.airforceblue}; margin-top: 1px; }
+  ul.bullets .bullet-text { flex: 1 1 auto; min-width: 0; }
 
   .summary { font-size: 10.5pt; margin: 0; }
   strong { color: ${COLORS.darktext}; }
