@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(git config *)",
+      "PowerShell(Out-Null *)",
+      "PowerShell(winget *)"
+    ]
+  }
+}
