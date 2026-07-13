@@ -6,6 +6,22 @@
   box-sizing: border-box;
 }
 
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+#root {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
 /* 1. Semantic tokens — these are the ones that SWITCH between themes */
 :root {
   --color-bg: #f8f9fb;

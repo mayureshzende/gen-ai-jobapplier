@@ -68,23 +68,23 @@ const Register = () => {
   }
 
   return (
-    <div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }} className="min-h-screen flex flex-col">
-      <nav style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-divider)' }} className="backdrop-blur-md bg-opacity-75 border-b px-6 py-3 flex items-center">
+    <div className="min-h-screen flex flex-col">
+      <nav className="backdrop-blur-md bg-opacity-75 border-b px-6 py-3 flex items-center" style={{ borderColor: 'var(--color-divider)' }}>
         <span className="font-bold text-lg">Tracker</span>
-        <Link to="/login" style={{ color: 'var(--color-text)' }} className="ml-auto text-sm hover:text-accent transition-colors">
+        <Link to="/login" className="ml-auto text-sm hover:text-accent transition-colors">
           Already have an account? Log In
         </Link>
       </nav>
 
       <div className="flex-1 flex items-center justify-center px-6 py-10">
         <div className="w-full max-w-[420px]">
-          <h6 style={{ color: 'var(--color-accent)' }} className="text-xs font-semibold uppercase mb-1.5">Get started</h6>
+          <h6 className="text-accent text-xs font-semibold uppercase mb-1.5">Get started</h6>
           <h2 className="text-2xl font-bold mb-1.5">Create Account</h2>
-          <p style={{ color: 'var(--color-text-secondary)' }} className="text-sm mb-8">
+          <p className="text-text-secondary text-sm mb-8">
             Track applications and generate tailored resumes and cover letters.
           </p>
 
-          <div style={{ borderColor: 'var(--color-divider)' }} className="space-y-5 border-t pt-6">
+          <div className="space-y-5 border-t pt-6" style={{ borderColor: 'var(--color-divider)' }}>
             <FormField label="Username" htmlFor="reg-username">
               <Input
                 id="reg-username"
@@ -115,13 +115,13 @@ const Register = () => {
               />
             </FormField>
 
-            {error && <div style={{ color: 'var(--status-rejected)', backgroundColor: 'var(--status-rejected)' }} className="text-xs bg-opacity-10 p-3 rounded-md">{error}</div>}
+            {error && <div className="text-xs text-status-rejected bg-status-rejected/10 p-3 rounded-md">{error}</div>}
 
             <Button variant="primary" onClick={handleSubmit} className="w-full">
               Create Account
             </Button>
 
-            <p style={{ color: 'var(--color-text-secondary)' }} className="text-[11px]">
+            <p className="text-text-secondary text-[11px]">
               By creating an account you agree to the Terms of Service and Privacy Policy.
             </p>
           </div>

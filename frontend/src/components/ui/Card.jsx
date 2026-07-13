@@ -23,7 +23,7 @@ const Card = React.forwardRef(
     const elevationClass = elevationClasses[elevation] || elevationClasses.none;
     const interactiveClass = interactive ? 'hover:shadow-md transition-shadow cursor-pointer' : '';
     const baseStyle = {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      backgroundColor: '#ffffff20',
       borderColor: 'var(--color-divider)',
     };
 
