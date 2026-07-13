@@ -4,6 +4,7 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  updateUserInfo,
 } from "../controller/user.controller.js";
 import authUserMiddleware from "../middleware/auth.middleware.js";
 const authRouter = Router();
@@ -35,5 +36,12 @@ authRouter.post("/logout", logoutUser);
  * @access private
  */
 authRouter.post("/getMe", authUserMiddleware, getMe);
+
+/**
+ * @route PUT api/auth/update-info
+ * @description Update user's first, middle, and last name
+ * @access private
+ */
+authRouter.put("/update-info", authUserMiddleware, updateUserInfo);
 
 export default authRouter;

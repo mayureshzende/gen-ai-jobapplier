@@ -275,6 +275,83 @@ export const deleteExperience = async (req, res) => {
 };
 
 /**
+ * @PUT /api/profile/experience/reorder/:expId
+ * @description Reorder experience entries (move up or down)
+ * @access Private
+ */
+export const reorderExperience = async (req, res) => {
+  try {
+    const { expId } = req.params;
+    const { direction } = req.body; // 'up' or 'down'
+
+    if (!['up', 'down'].includes(direction)) {
+      return res.status(400).json({
+        success: false,
+        message: "Direction must be 'up' or 'down'",
+      });
+    }
+
+    const profile = await profileModel.findOne({ user: req.user.id });
+
+    if (!profile) {
+      return res.status(404).json({
+        success: false,
+        message: "Profile not found",
+      });
+    }
+
+    const currentIndex = profile.experience.findIndex(
+      (exp) => exp._id.toString() === expId
+    );
+
+    if (currentIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: "Experience not found",
+      });
+    }
+
+    let newIndex;
+    if (direction === 'up') {
+      if (currentIndex === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot move up - already at the top",
+        });
+      }
+      newIndex = currentIndex - 1;
+    } else {
+      if (currentIndex === profile.experience.length - 1) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot move down - already at the bottom",
+        });
+      }
+      newIndex = currentIndex + 1;
+    }
+
+    // Swap the items
+    const temp = profile.experience[currentIndex];
+    profile.experience[currentIndex] = profile.experience[newIndex];
+    profile.experience[newIndex] = temp;
+
+    await profile.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Experience moved ${direction} successfully`,
+      profile,
+    });
+  } catch (error) {
+    console.error("Error reordering experience:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to reorder experience",
+    });
+  }
+};
+
+/**
  * @POST /api/profile/certifications
  * @description Add a new certification
  * @access Private

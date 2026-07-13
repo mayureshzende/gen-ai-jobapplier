@@ -8,6 +8,7 @@ import {
   addExperience,
   updateExperience,
   deleteExperience,
+  reorderExperience,
   addCertification,
   deleteCertification,
 } from "../controller/profile.controller.js";
@@ -26,6 +27,7 @@ router.put("/skills", updateSkills);
 // Experience routes
 router.post("/experience", addExperience);
 router.put("/experience/:expId", updateExperience);
+router.put("/experience/:expId/reorder", reorderExperience);
 router.delete("/experience/:expId", deleteExperience);
 
 // Certification routes

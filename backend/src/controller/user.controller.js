@@ -10,7 +10,7 @@ import blackListModel from "../models/blacklist.mode.js";
  */
 const registerUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, firstName, middleName, lastName } = req.body;
 
     // Validate input
     if (!username || !email || !password) {
@@ -44,6 +44,9 @@ const registerUser = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      firstName: firstName || "",
+      middleName: middleName || "",
+      lastName: lastName || "",
     });
 
     // Generate token
@@ -52,6 +55,9 @@ const registerUser = async (req, res) => {
         id: user._id,
         username,
         email,
+        firstName: user.firstName,
+        middleName: user.middleName,
+        lastName: user.lastName,
       },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
@@ -114,7 +120,14 @@ const loginUser = async (req, res) => {
 
     // Generate token
     const token = jwtToken.sign(
-      { id: user._id, username, email: user.email },
+      {
+        id: user._id,
+        username,
+        email: user.email,
+        firstName: user.firstName,
+        middleName: user.middleName,
+        lastName: user.lastName,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -189,6 +202,9 @@ const getMe = (req, res) => {
     id: userDetails.id,
     username: userDetails.username,
     email: userDetails.email,
+    firstName: userDetails.firstName || "",
+    middleName: userDetails.middleName || "",
+    lastName: userDetails.lastName || "",
   };
   return res.status(200).json({
     message: "user details fetched successfully",
@@ -197,4 +213,53 @@ const getMe = (req, res) => {
   });
 };
 
-export { registerUser, loginUser, logoutUser, getMe };
+/**
+ * @name UpdateUserInfo
+ * @description Update user's first, middle, and last name
+ * @access Private
+ */
+const updateUserInfo = async (req, res) => {
+  try {
+    const { firstName, middleName, lastName } = req.body;
+
+    const user = await userModel.findByIdAndUpdate(
+      req.user.id,
+      {
+        firstName: firstName || "",
+        middleName: middleName || "",
+        lastName: lastName || "",
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const updatedUser = {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      firstName: user.firstName,
+      middleName: user.middleName,
+      lastName: user.lastName,
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: "User information updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating user info:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update user information",
+    });
+  }
+};
+
+export { registerUser, loginUser, logoutUser, getMe, updateUserInfo };
