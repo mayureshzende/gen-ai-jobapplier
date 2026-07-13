@@ -7,58 +7,65 @@ import {
   register,
 } from "../services/Auth.api.service.js";
 
+// Global state to prevent multiple simultaneous requests
+let isInitializing = false;
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   const { user, setuser, loading, setloading } = context;
-  const hasRunRef = useRef(false);
   const mountedRef = useRef(true);
 
-  console.log("[useAuth] Current state - loading:", loading, "user:", user);
+  console.log("[useAuth] Current state - loading:", loading, "user:", user?.username);
 
   useEffect(() => {
-    console.log("[useAuth] Cleanup effect mounted");
+    console.log("[useAuth] Mount effect");
     return () => {
-      console.log("[useAuth] Cleanup effect - unmounting");
+      console.log("[useAuth] Unmount effect");
       mountedRef.current = false;
     };
   }, []);
 
+  // Only run once on initial mount of the entire app
   useEffect(() => {
-    console.log("[useAuth] Auth init effect - hasRunRef:", hasRunRef.current);
-    if (hasRunRef.current) {
-      console.log("[useAuth] Already ran, skipping");
+    console.log("[useAuth] Init effect - isInitializing:", isInitializing, "user:", user?.username);
+
+    // If already initializing or user is already set, don't run again
+    if (isInitializing || user) {
+      console.log("[useAuth] Skipping init - either already initializing or user already set");
       return;
     }
-    hasRunRef.current = true;
+
+    isInitializing = true;
+    console.log("[useAuth] Starting getMeUser");
 
     const getMeUser = async () => {
-      console.log("[useAuth] getMeUser - Starting getMe call");
       try {
         console.log("[useAuth] getMeUser - Setting loading to true");
         setloading(true);
         const userres = await getMe();
-        console.log("[useAuth] getMeUser - Got response:", userres);
+        console.log("[useAuth] getMeUser - Got response:", userres?.user);
         if (mountedRef.current) {
-          // Extract user object from response
           const userData = userres?.user || userres;
-          console.log("[useAuth] getMeUser - Setting user:", userData);
+          console.log("[useAuth] getMeUser - Setting user:", userData?.username);
           setuser(userData);
         } else {
-          console.log("[useAuth] getMeUser - Component unmounted, not setting user");
+          console.log("[useAuth] getMeUser - Component unmounted, skipping state update");
         }
       } catch (error) {
-        console.error("[useAuth] Auth check error:", error?.response?.status, error?.message);
+        console.error("[useAuth] getMeUser failed:", error?.response?.status, error?.message);
         // User not logged in or session expired
-        console.log("[useAuth] getMeUser - Error caught, user will stay null");
+        if (mountedRef.current) {
+          console.log("[useAuth] getMeUser - Error, keeping user as null");
+        }
       } finally {
+        isInitializing = false;
         if (mountedRef.current) {
           console.log("[useAuth] getMeUser - Setting loading to false");
           setloading(false);
-        } else {
-          console.log("[useAuth] getMeUser - Component unmounted, not setting loading");
         }
       }
     };
+
     getMeUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
