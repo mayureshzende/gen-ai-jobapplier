@@ -146,6 +146,7 @@ const getAllInterviewReports = async (req, res) => {
 const generatePDFFromId = async (req, res) => {
   try {
     const { interviewId } = req.params;
+    console.log("[generatePDFFromId] Starting PDF generation for id:", interviewId);
 
     const foundInterviewReport = await interviewReportModel.findOne({
       _id: interviewId,
@@ -153,13 +154,25 @@ const generatePDFFromId = async (req, res) => {
     });
 
     if (!foundInterviewReport) {
+      console.log("[generatePDFFromId] Report not found for id:", interviewId);
       return res.status(404).json({
         success: false,
         message: "Interview report not found",
       });
     }
 
+    console.log("[generatePDFFromId] Found report, generating PDF...");
     const generatedPdf = await generatePDF(foundInterviewReport);
+
+    if (!generatedPdf || generatedPdf.length === 0) {
+      console.error("[generatePDFFromId] PDF generation returned empty:", generatedPdf);
+      return res.status(500).json({
+        success: false,
+        message: "PDF generation failed - empty result",
+      });
+    }
+
+    console.log("[generatePDFFromId] PDF generated successfully, size:", generatedPdf.length);
     const dateStamp = getTodaysDate();
     const formattedJobTitle = foundInterviewReport.jobTitle.replace(/\s+/g, "_");
 
@@ -169,13 +182,17 @@ const generatePDFFromId = async (req, res) => {
       `attachment; filename=${req.user.username}_${formattedJobTitle}_${dateStamp}.pdf`
     );
     res.setHeader("Content-Length", generatedPdf.length);
+    res.setHeader("Access-Control-Allow-Origin", process.env.CORS_ORIGIN || "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
 
+    console.log("[generatePDFFromId] Sending PDF response");
     return res.end(generatedPdf);
   } catch (error) {
-    console.error("Error generating PDF:", error);
+    console.error("[generatePDFFromId] Error generating PDF:", error?.message);
+    console.error("[generatePDFFromId] Error stack:", error?.stack);
     return res.status(500).json({
       success: false,
-      message: "Failed to generate PDF",
+      message: "Failed to generate PDF: " + error?.message,
     });
   }
 };

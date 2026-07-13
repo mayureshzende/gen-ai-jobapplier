@@ -15,6 +15,7 @@ const generateInterviewReport = async ({
   profileSummary,
 }) => {
   try {
+    console.log("[generateInterviewReport] Starting AI report generation");
     const interaction = await ai.models.generateContent({
       model: "gemini-3.5-flash",
       // Provide the context to the model via contents
@@ -31,9 +32,11 @@ const generateInterviewReport = async ({
 
     // The output is guaranteed to be a stringified valid JSON object matching schema
     const reportJson = JSON.parse(interaction.text);
+    console.log("[generateInterviewReport] Report generated successfully");
     return reportJson;
   } catch (err) {
-    console.error("error while generating the report", err);
+    console.error("[generateInterviewReport] Error generating report:", err?.message);
+    throw err;
   }
 };
 
@@ -74,6 +77,7 @@ const generateInterviewReport = async ({
 
 const generatePDF = async (interviewReport) => {
   try {
+    console.log("[generatePDF] Starting PDF generation");
     const { resume, jobTitle, profileSummary, jobDescription } =
       interviewReport;
     const prompt = buildResumeContentPrompt(
@@ -82,6 +86,7 @@ const generatePDF = async (interviewReport) => {
       resume,
       jobTitle,
     );
+    console.log("[generatePDF] Generated prompt, calling Gemini API");
     const generatePDFContentJson = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       // model: "gemini-3.5-flash",
@@ -91,7 +96,7 @@ const generatePDF = async (interviewReport) => {
         //   responseJsonSchema: z.toJSONSchema(geminiPdfHtmlSchema),
       },
     });
-    console.log("the response of json is -> ", generatePDFContentJson.text);
+    console.log("[generatePDF] Received Gemini response, parsing JSON");
     const jsonContent =
       typeof generatePDFContentJson.text === "string"
         ? JSON.parse(generatePDFContentJson.text)
@@ -103,10 +108,14 @@ const generatePDF = async (interviewReport) => {
     //   ...jsonContent, // summary, skills, experience, projects, certifications, additional
     // };
 
+    console.log("[generatePDF] Calling generateResumePDF");
     const pdfBuffer = await generateResumePDF(jsonContent);
+    console.log("[generatePDF] PDF generated successfully, size:", pdfBuffer?.length);
     return pdfBuffer;
   } catch (err) {
-    console.error("error generating the PDF", err);
+    console.error("[generatePDF] Error generating PDF:", err?.message);
+    console.error("[generatePDF] Error details:", err);
+    throw err;
   }
 };
 export { generateInterviewReport, generatePDF };
