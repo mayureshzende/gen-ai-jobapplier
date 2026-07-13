@@ -13,26 +13,36 @@ export const useInterview = () => {
   const mountedRef = useRef(true);
   const hasFetchedRef = useRef(false);
 
+  console.log("[useInterview] Current state - loading:", loading, "reports:", reports?.length);
+
   useEffect(() => {
+    console.log("[useInterview] Cleanup effect mounted");
     return () => {
+      console.log("[useInterview] Cleanup effect - unmounting");
       mountedRef.current = false;
     };
   }, []);
 
   const getReports = useCallback(async () => {
+    console.log("[useInterview] getReports - Starting fetch");
     try {
+      console.log("[useInterview] getReports - Setting loading to true");
       setLoading(true);
       const reportsres = await getAllInterviewReports();
+      console.log("[useInterview] getReports - Got response:", reportsres);
       if (mountedRef.current) {
+        console.log("[useInterview] getReports - Setting reports:", reportsres?.reports);
         setReports(reportsres?.reports);
       }
     } catch (error) {
-      console.error("error fetching reports ", error);
+      console.error("[useInterview] error fetching reports", error?.message);
       if (mountedRef.current) {
+        console.log("[useInterview] getReports - Error, setting loading to false");
         setLoading(false);
       }
     } finally {
       if (mountedRef.current) {
+        console.log("[useInterview] getReports - Finally block, setting loading to false");
         setLoading(false);
       }
     }

@@ -36,10 +36,12 @@ export const logout = async () => {
 
 export const getMe = async () => {
   try {
+    console.log("[Auth.getMe] Calling /api/auth/getMe");
     const res = await apiClient.post("/api/auth/getMe", {});
+    console.log("[Auth.getMe] Response:", res.data);
     return res.data;
   } catch (error) {
-    console.error(error);
+    console.error("[Auth.getMe] Error:", error?.response?.status, error?.message);
     throw error;
   }
 };

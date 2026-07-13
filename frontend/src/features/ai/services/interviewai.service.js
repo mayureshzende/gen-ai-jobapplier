@@ -29,10 +29,12 @@ export const getInterviewReportById = async (id) => {
 
 export const getAllInterviewReports = async () => {
   try {
+    console.log("[interviewai.getAllInterviewReports] Calling /api/interview/");
     const res = await apiClient.get("/api/interview/");
+    console.log("[interviewai.getAllInterviewReports] Response:", res.data);
     return res.data;
   } catch (error) {
-    console.error("error fetching all reports", error?.message);
+    console.error("[interviewai.getAllInterviewReports] Error:", error?.response?.status, error?.message);
     throw error;
   }
 };

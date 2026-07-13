@@ -13,30 +13,49 @@ export const useAuth = () => {
   const hasRunRef = useRef(false);
   const mountedRef = useRef(true);
 
+  console.log("[useAuth] Current state - loading:", loading, "user:", user);
+
   useEffect(() => {
+    console.log("[useAuth] Cleanup effect mounted");
     return () => {
+      console.log("[useAuth] Cleanup effect - unmounting");
       mountedRef.current = false;
     };
   }, []);
 
   useEffect(() => {
-    if (hasRunRef.current) return;
+    console.log("[useAuth] Auth init effect - hasRunRef:", hasRunRef.current);
+    if (hasRunRef.current) {
+      console.log("[useAuth] Already ran, skipping");
+      return;
+    }
     hasRunRef.current = true;
 
     const getMeUser = async () => {
+      console.log("[useAuth] getMeUser - Starting getMe call");
       try {
+        console.log("[useAuth] getMeUser - Setting loading to true");
         setloading(true);
         const userres = await getMe();
+        console.log("[useAuth] getMeUser - Got response:", userres);
         if (mountedRef.current) {
           // Extract user object from response
-          setuser(userres?.user || userres);
+          const userData = userres?.user || userres;
+          console.log("[useAuth] getMeUser - Setting user:", userData);
+          setuser(userData);
+        } else {
+          console.log("[useAuth] getMeUser - Component unmounted, not setting user");
         }
       } catch (error) {
-        console.error("Auth check error:", error);
+        console.error("[useAuth] Auth check error:", error?.response?.status, error?.message);
         // User not logged in or session expired
+        console.log("[useAuth] getMeUser - Error caught, user will stay null");
       } finally {
         if (mountedRef.current) {
+          console.log("[useAuth] getMeUser - Setting loading to false");
           setloading(false);
+        } else {
+          console.log("[useAuth] getMeUser - Component unmounted, not setting loading");
         }
       }
     };

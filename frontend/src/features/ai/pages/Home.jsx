@@ -8,12 +8,15 @@ import SegmentedControl from '../../../components/ui/SegmentedControl';
 import { STATUS_ORDER, STATUS_META, tintStyle, scoreMeta } from '../../../lib/statusMeta';
 
 const Dashboard = () => {
+  console.log("[Dashboard] Mounting");
   const { applications } = useApplications();
   const { reports } = useInterview();
   const [view, setView] = useState('kanban');
   const [draggedId, setDraggedId] = useState(null);
   const [dragOverStatus, setDragOverStatus] = useState(null);
   const { updateApplicationStatus } = useApplications();
+
+  console.log("[Dashboard] Rendering - applications:", applications?.length, "reports:", reports?.length);
 
   const stats = [
     { label: 'Total Applications', value: applications.length },
