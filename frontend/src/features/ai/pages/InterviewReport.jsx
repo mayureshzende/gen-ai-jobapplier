@@ -33,14 +33,18 @@ const InterviewReport = () => {
 
   const handleDownloadPDF = async () => {
     if (!interviewId) {
-      setError('Cannot download: report ID missing');
+      console.error("[InterviewReport] Cannot download: report ID missing");
       return;
     }
     setDownloading(true);
     try {
+      console.log("[InterviewReport] Starting PDF download");
       await generatePDFforReportId(interviewId);
+      console.log("[InterviewReport] PDF downloaded successfully");
     } catch (err) {
-      setError(err?.message || 'Failed to download PDF');
+      console.error("[InterviewReport] PDF download error:", err?.message);
+      // Show a notification but don't hide the report
+      alert(`Failed to download PDF: ${err?.message || 'Network error. Please try again.'}`);
     } finally {
       setDownloading(false);
     }
