@@ -30,15 +30,18 @@ export const useInterview = () => {
       setLoading(true);
       const reportsres = await getAllInterviewReports();
       console.log("[useInterview] getReports - Got response:", reportsres);
+      console.log("[useInterview] getReports - Response structure - success:", reportsres?.success, "reports exists:", !!reportsres?.reports, "reports count:", reportsres?.reports?.length);
       if (mountedRef.current) {
-        console.log("[useInterview] getReports - Setting reports:", reportsres?.reports);
-        setReports(reportsres?.reports);
+        const reportsList = reportsres?.reports || [];
+        console.log("[useInterview] getReports - Setting reports, count:", reportsList.length);
+        setReports(reportsList);
       }
     } catch (error) {
       console.error("[useInterview] error fetching reports", error?.message);
       if (mountedRef.current) {
         console.log("[useInterview] getReports - Error, setting loading to false");
         setLoading(false);
+        setReports([]);
       }
     } finally {
       if (mountedRef.current) {

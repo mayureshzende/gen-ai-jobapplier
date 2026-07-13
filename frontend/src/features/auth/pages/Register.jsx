@@ -8,6 +8,9 @@ import FormField from '../../../components/ui/FormField';
 
 const Register = () => {
   const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [middleName, setMiddleName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -39,7 +42,14 @@ const Register = () => {
     }
 
     try {
-      const res = await handleRegister({ username, email, password });
+      const res = await handleRegister({
+        username,
+        email,
+        password,
+        firstName,
+        middleName,
+        lastName,
+      });
 
       if (res?.success === true) {
         navigate('/login?registered=1');
@@ -69,17 +79,17 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="backdrop-blur-md bg-opacity-75 border-b px-6 py-3 flex items-center" style={{ borderColor: 'var(--color-divider)' }}>
+      <nav className="backdrop-blur-md bg-opacity-75 border-b px-4 sm:px-6 py-3 flex items-center" style={{ borderColor: 'var(--color-divider)' }}>
         <span className="font-bold text-lg">Tracker</span>
         <Link to="/login" className="ml-auto text-sm hover:text-accent transition-colors">
           Already have an account? Log In
         </Link>
       </nav>
 
-      <div className="flex-1 flex items-center justify-center px-6 py-10">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 py-8 sm:py-10">
         <div className="w-full max-w-[420px]">
           <h6 className="text-accent text-xs font-semibold uppercase mb-1.5">Get started</h6>
-          <h2 className="text-2xl font-bold mb-1.5">Create Account</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-1.5">Create Account</h2>
           <p className="text-text-secondary text-sm mb-8">
             Track applications and generate tailored resumes and cover letters.
           </p>
@@ -94,6 +104,38 @@ const Register = () => {
                 onChange={(e) => setUsername(e.target.value)}
               />
             </FormField>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+              <FormField label="First Name (Optional)" htmlFor="reg-firstName">
+                <Input
+                  id="reg-firstName"
+                  type="text"
+                  placeholder="Jane"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </FormField>
+
+              <FormField label="Middle Name (Optional)" htmlFor="reg-middleName">
+                <Input
+                  id="reg-middleName"
+                  type="text"
+                  placeholder="Marie"
+                  value={middleName}
+                  onChange={(e) => setMiddleName(e.target.value)}
+                />
+              </FormField>
+
+              <FormField label="Last Name (Optional)" htmlFor="reg-lastName">
+                <Input
+                  id="reg-lastName"
+                  type="text"
+                  placeholder="Doe"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </FormField>
+            </div>
 
             <FormField label="Email" htmlFor="reg-email">
               <Input

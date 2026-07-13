@@ -8,6 +8,10 @@ node_modules/
 .env.local
 .env.*.local
 
+# Design Templates
+Job Application Tracker Design/
+Job Application Tracker Design.zip
+
 # Logs
 logs/
 *.log

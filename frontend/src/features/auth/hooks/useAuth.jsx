@@ -5,6 +5,7 @@ import {
   login,
   logout,
   register,
+  updateUserInfo,
 } from "../services/Auth.api.service.js";
 
 // Global state to prevent multiple simultaneous requests
@@ -75,6 +76,9 @@ export const useAuth = () => {
     email,
     password,
     confirmpassword,
+    firstName,
+    middleName,
+    lastName,
   }) => {
     try {
       setloading(true);
@@ -83,6 +87,9 @@ export const useAuth = () => {
         email,
         password,
         confirmpassword,
+        firstName,
+        middleName,
+        lastName,
       });
       return registeruser;
     } catch (error) {
@@ -140,5 +147,24 @@ export const useAuth = () => {
     }
   };
 
-  return { user, loading, handleLogin, handleLogout, handleRegister };
+  const handleUpdateUserInfo = async ({ firstName, middleName, lastName }) => {
+    try {
+      // Don't set global loading state - this would block the entire page
+      // The Profile page has its own saving state
+      console.log("[useAuth] handleUpdateUserInfo - Starting");
+      const updateRes = await updateUserInfo({ firstName, middleName, lastName });
+
+      if (mountedRef.current && updateRes?.user) {
+        console.log("[useAuth] handleUpdateUserInfo - Updating user state");
+        setuser(updateRes.user);
+      }
+
+      return updateRes;
+    } catch (error) {
+      console.error("[useAuth] handleUpdateUserInfo error:", error);
+      throw error;
+    }
+  };
+
+  return { user, loading, handleLogin, handleLogout, handleRegister, handleUpdateUserInfo };
 };

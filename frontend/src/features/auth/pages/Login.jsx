@@ -58,17 +58,17 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <nav className="backdrop-blur-md bg-opacity-75 border-b px-6 py-3 flex items-center" style={{ borderColor: 'var(--color-divider)' }}>
+      <nav className="backdrop-blur-md bg-opacity-75 border-b px-4 sm:px-6 py-3 flex items-center" style={{ borderColor: 'var(--color-divider)' }}>
         <span className="font-bold text-lg">Tracker</span>
         <Link to="/register" className="ml-auto text-sm hover:text-accent transition-colors">
           Don't have an account? Register
         </Link>
       </nav>
 
-      <div className="flex-1 flex items-center justify-center px-6 py-10">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 py-8 sm:py-10">
         <div className="w-full max-w-[420px]">
           <h6 className="text-accent text-xs font-semibold uppercase mb-1.5">Welcome back</h6>
-          <h2 className="text-2xl font-bold mb-1.5">Log In</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-1.5">Log In</h2>
           <p className="text-text-secondary text-sm mb-8">
             Log in to track applications and generate tailored reports.
           </p>

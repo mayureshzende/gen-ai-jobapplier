@@ -8,6 +8,7 @@ import FormField from '../../../components/ui/FormField';
 import Tag from '../../../components/ui/Tag';
 import Card from '../../../components/ui/Card';
 import PageSkeleton from '../../../components/ui/PageSkeleton';
+import { formatDateLong } from '../../../lib/dateUtils';
 
 const GenerateReport = () => {
   const navigate = useNavigate();
@@ -88,13 +89,13 @@ const GenerateReport = () => {
   }
 
   return (
-    <div className="px-6 py-8">
+    <div className="px-4 sm:px-6 py-6 sm:py-8">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold mb-8">Generate Interview Strategy</h2>
+        <h2 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8">Generate Interview Strategy</h2>
 
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Left: Input Form */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <FormField label="Job Description" htmlFor="jd" required hint={`${jobDescription.length} / 5000 chars`}>
               <Textarea
                 id="jd"
@@ -110,7 +111,7 @@ const GenerateReport = () => {
               <Input id="company" placeholder="Google" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
             </FormField>
 
-            <div className="border-2 border-dashed border-divider rounded-lg p-6 text-center cursor-pointer hover:border-accent transition-colors">
+            <div className="border-2 border-dashed border-divider rounded-lg p-4 sm:p-6 text-center cursor-pointer hover:border-accent transition-colors">
               <input
                 type="file"
                 id="resume"
@@ -119,8 +120,8 @@ const GenerateReport = () => {
                 className="hidden"
               />
               <label htmlFor="resume" className="cursor-pointer block">
-                <div className="text-4xl mb-2">📄</div>
-                <div className="font-medium text-sm">{resumeFile ? resumeFile.name : 'Upload Resume (PDF)'}</div>
+                <div className="text-3xl sm:text-4xl mb-2">📄</div>
+                <div className="font-medium text-xs sm:text-sm break-words">{resumeFile ? resumeFile.name : 'Upload Resume (PDF)'}</div>
                 <div className="text-xs text-text-secondary mt-1">or drag and drop</div>
               </label>
             </div>
@@ -170,7 +171,7 @@ const GenerateReport = () => {
                   >
                     <Card.Title className="text-sm">{report.jobTitle}</Card.Title>
                     <Card.Meta className="text-xs mt-2">
-                      <span>Generated {new Date(report.createdAt).toLocaleDateString()}</span>
+                      <span>Generated {formatDateLong(report.createdAt)}</span>
                       <Tag variant="status" style={{ backgroundColor: `var(${report.matchScore >= 80 ? '--status-offer' : report.matchScore >= 60 ? '--status-interview' : '--status-rejected'})`, color: 'white' }}>
                         {report.matchScore}%
                       </Tag>

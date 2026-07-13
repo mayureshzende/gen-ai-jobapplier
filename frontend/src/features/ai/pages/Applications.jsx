@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useApplications } from '../../applications/hooks/useApplications';
+import { useApplications } from '../hooks/useApplications';
+import { useProfile } from '../hooks/useProfile';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
 import { Select } from '../../../components/ui/Input';
 import Textarea from '../../../components/ui/Textarea';
 import FormField from '../../../components/ui/FormField';
 import SegmentedControl from '../../../components/ui/SegmentedControl';
+import { formatDateShort } from '../../../lib/dateUtils';
 
 const AddApplication = () => {
   const navigate = useNavigate();
   const { addApplication } = useApplications();
+  const { profile } = useProfile();
   const [formData, setFormData] = useState({
     company: '',
     role: '',
@@ -55,7 +58,7 @@ const AddApplication = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -63,20 +66,26 @@ const AddApplication = () => {
     }
 
     try {
-      addApplication(formData);
+      console.log("[AddApplication] Submitting form:", formData);
+      const result = await addApplication(formData);
+      console.log("[AddApplication] Application created:", result._id);
       navigate('/dashboard');
     } catch (err) {
-      setErrors({ submit: err.message || 'Failed to save application' });
+      console.error("[AddApplication] Error:", err.message);
+      setErrors({ submit: err?.response?.data?.message || err.message || 'Failed to save application' });
     }
   };
 
   return (
-    <div className="px-6 py-8">
-      <div className="max-w-2xl mx-auto">
+    <div className="px-4 sm:px-6 py-6 sm:py-8">
+      <div className="max-w-6xl mx-auto">
         <h6 className="text-accent text-xs font-semibold uppercase mb-2">Applications</h6>
-        <h2 className="text-2xl font-bold mb-2">Add New Application</h2>
-        <p className="text-text-secondary text-sm mb-8">Track a new job application to get AI-powered interview preparation.</p>
+        <h2 className="text-xl sm:text-2xl font-bold mb-2">Add New Application</h2>
+        <p className="text-text-secondary text-sm mb-6 sm:mb-8">Track a new job application to get AI-powered interview preparation.</p>
 
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          {/* LEFT COLUMN - Form */}
+          <div className="col-span-1 lg:col-span-2">
         <form onSubmit={handleSubmit} className="space-y-6">
           {errors.submit && (
             <div className="text-xs text-status-rejected bg-status-rejected/10 p-3 rounded-md">
@@ -84,7 +93,7 @@ const AddApplication = () => {
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <FormField label="Company" htmlFor="company" required error={errors.company}>
               <Input
                 id="company"
@@ -107,7 +116,7 @@ const AddApplication = () => {
             </FormField>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <FormField label="Location" htmlFor="location" required error={errors.location}>
               <Input
                 id="location"
@@ -175,6 +184,57 @@ const AddApplication = () => {
             </Button>
           </div>
         </form>
+          </div>
+
+          {/* RIGHT COLUMN - Your Experience */}
+          <div className="col-span-1">
+            <div className="bg-surface/60 rounded-lg p-4 sm:p-5 border border-divider lg:sticky lg:top-6">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-accent mb-4">Your Experience</h3>
+
+              {profile && profile.experience && profile.experience.length > 0 ? (
+                <div className="space-y-3">
+                  {profile.experience.map((exp, idx) => (
+                    <div key={exp._id} className="pb-3 border-b border-divider last:border-b-0 last:pb-0">
+                      <div className="text-xs font-semibold text-text">{exp.role}</div>
+                      <div className="text-xs text-accent">{exp.company}</div>
+                      {exp.startDate && (
+                        <div className="text-xs text-text-secondary mt-1">
+                          {formatDateShort(exp.startDate)}
+                          {exp.endDate && ` - ${formatDateShort(exp.endDate)}`}
+                          {exp.currentlyWorking && ' (Present)'}
+                        </div>
+                      )}
+                      {exp.description && (
+                        <p className="text-xs text-text-secondary leading-relaxed mt-2">{exp.description.substring(0, 100)}...</p>
+                      )}
+                    </div>
+                  ))}
+
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => navigate('/profile')}
+                    className="w-full mt-4"
+                  >
+                    Edit Experience
+                  </Button>
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-xs text-text-secondary mb-3">No experience added yet</p>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => navigate('/profile')}
+                    className="w-full"
+                  >
+                    Add Experience
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
