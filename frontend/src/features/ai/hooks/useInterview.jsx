@@ -50,18 +50,26 @@ export const useInterview = () => {
 
   const getReportbyId = async (id) => {
     try {
+      console.log("[useInterview] getReportbyId - Starting fetch for id:", id);
       setLoading(true);
       const report = await getInterviewReportById(id);
+      console.log("[useInterview] getReportbyId - Got response:", report);
       if (mountedRef.current) {
-        setReport(report?.interviewReport);
+        console.log("[useInterview] getReportbyId - Setting report:", report?.interviewReport?._id);
+        setReport(report?.interviewReport || report);
+      } else {
+        console.log("[useInterview] getReportbyId - Component unmounted, not setting report");
       }
+      return report?.interviewReport || report;
     } catch (error) {
-      console.error("error fetching report ", error);
+      console.error("[useInterview] getReportbyId error:", error?.response?.status, error?.message);
       if (mountedRef.current) {
         setLoading(false);
       }
+      throw error;
     } finally {
       if (mountedRef.current) {
+        console.log("[useInterview] getReportbyId - Setting loading to false");
         setLoading(false);
       }
     }

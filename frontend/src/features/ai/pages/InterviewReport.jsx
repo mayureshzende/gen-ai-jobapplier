@@ -15,6 +15,8 @@ const InterviewReport = () => {
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState(interviewId ? '' : 'No report ID provided');
 
+  console.log("[InterviewReport] Mount - interviewId:", interviewId, "loading:", loading, "report:", report?._id);
+
   useEffect(() => {
     console.log("[InterviewReport] useEffect - interviewId:", interviewId, "report:", report?._id);
     if (!interviewId) {

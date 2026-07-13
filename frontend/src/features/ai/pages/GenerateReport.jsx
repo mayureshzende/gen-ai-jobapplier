@@ -162,7 +162,11 @@ const GenerateReport = () => {
                     interactive
                     as="a"
                     href={`/interview/${report._id}`}
-                    onClick={() => navigate(`/interview/${report._id}`)}
+                    onClick={(e) => {
+                      console.log("[GenerateReport] Clicking on report:", report._id, report.jobTitle);
+                      e.preventDefault();
+                      navigate(`/interview/${report._id}`);
+                    }}
                   >
                     <Card.Title className="text-sm">{report.jobTitle}</Card.Title>
                     <Card.Meta className="text-xs mt-2">

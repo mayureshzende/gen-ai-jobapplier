@@ -19,10 +19,12 @@ export const uploadCv = async (resumePDF, jobDescription, profileSummary) => {
 
 export const getInterviewReportById = async (id) => {
   try {
+    console.log("[interviewai.getInterviewReportById] Calling /api/interview/" + id);
     const res = await apiClient.get(`/api/interview/${id}`);
+    console.log("[interviewai.getInterviewReportById] Response:", res.data);
     return res.data;
   } catch (error) {
-    console.error("error fetching the report", error?.message);
+    console.error("[interviewai.getInterviewReportById] Error:", error?.response?.status, error?.message, error?.response?.data);
     throw error;
   }
 };
