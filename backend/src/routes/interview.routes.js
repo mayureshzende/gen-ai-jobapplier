@@ -6,49 +6,52 @@ import {
   getAllInterviewReports,
   getInterviewReportbyId,
   handleFileUploadandGenerateReport,
+  deleteInterviewReport,
 } from "../controller/interview.controller.js";
 
 const interviewRouter = Router();
 
-/***
- * @route POST /api/interview/uploadcv
- * @description this is to get the user pdf from the user
- * @access private
+// All routes require authentication
+interviewRouter.use(authUserMiddleware);
+
+/**
+ * @POST /api/interview/uploadcv
+ * @description Generate interview report from resume upload
+ * @access Private
  */
 interviewRouter.post(
   "/uploadcv",
-  authUserMiddleware,
   upload.single("resume"),
-  handleFileUploadandGenerateReport,
+  handleFileUploadandGenerateReport
 );
 
 /**
- * @route GET /api/interview/:interviewReportId
- * @description get the specific interview report based on the id passed from the frontend
- * @access private
+ * @GET /api/interview/
+ * @description Get all interview reports for the user
+ * @access Private
  */
-interviewRouter.get(
-  "/:interviewReportId",
-  authUserMiddleware,
-  getInterviewReportbyId,
-);
+interviewRouter.get("/", getAllInterviewReports);
 
 /**
- * @route GET /api/interview/
- * @description Get all the reports generated in the past for the user
- * @access private
+ * @GET /api/interview/generatepdf/:interviewId
+ * @description Generate PDF from interview report
+ * @access Private
+ * @note Must come before /:id to avoid route conflict
  */
-interviewRouter.get("/", authUserMiddleware, getAllInterviewReports);
+interviewRouter.get("/generatepdf/:interviewId", generatePDFFromId);
 
 /**
- * @route GET /api/interview/pdf/:interviewId
- * @description generate the pdf from the provided interview id
- * @access private
+ * @GET /api/interview/:interviewReportId
+ * @description Get a specific interview report
+ * @access Private
  */
-interviewRouter.get(
-  "/generatepdf/:interviewId",
-  authUserMiddleware,
-  generatePDFFromId,
-);
+interviewRouter.get("/:interviewReportId", getInterviewReportbyId);
+
+/**
+ * @DELETE /api/interview/:interviewId
+ * @description Delete an interview report
+ * @access Private
+ */
+interviewRouter.delete("/:interviewId", deleteInterviewReport);
 
 export default interviewRouter;

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/modernist-edaf2adc-2368-4f9d-b4d3-44e6539866bb/styles.css">
+  <script src="_ds/modernist-edaf2adc-2368-4f9d-b4d3-44e6539866bb/_ds_bundle.js"></script>
+</helmet>
+
+<div style="position:relative; display:inline-block;">
+  <button onClick="{{ toggleOpen }}" style="display:flex; align-items:center; gap:8px; background:none; border:none; cursor:pointer; padding:6px 8px; border-radius:999px; color:var(--color-text); font-family:var(--font-body); transition:background 0.15s ease;">
+    <span style="width:28px; height:28px; flex:none; display:flex; align-items:center; justify-content:center; background:var(--color-accent); color:var(--color-bg); font-family:var(--font-heading); font-weight:800; font-size:12px; border-radius:50%;">{{ initials }}</span>
+    <span style="font-size:13px; font-weight:700; white-space:nowrap;">{{ userName }}</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6; flex:none;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </button>
+
+  <sc-if value="{{ isOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute; top:calc(100% + 8px); right:0; min-width:210px; background:color-mix(in srgb, var(--color-surface) 82%, transparent); backdrop-filter:blur(16px) saturate(160%); -webkit-backdrop-filter:blur(16px) saturate(160%); border:1px solid color-mix(in srgb, var(--color-divider) 60%, transparent); border-radius:16px; box-shadow:0 12px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08); z-index:20; overflow:hidden;">
+      <div style="padding:14px 16px; border-bottom:1px solid color-mix(in srgb, var(--color-divider) 60%, transparent);">
+        <div style="font-size:13px; font-weight:700;">{{ userName }}</div>
+        <div style="font-size:11px; opacity:0.6; margin-top:2px;">{{ userEmail }}</div>
+      </div>
+      <a href="{{ profileHref }}" style="display:flex; align-items:center; gap:10px; padding:11px 16px; font-size:13px; text-decoration:none; color:var(--color-text); border-radius:10px; margin:4px 6px 0;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        View Profile
+      </a>
+      <a href="{{ logoutHref }}" style="display:flex; align-items:center; gap:10px; padding:11px 16px; font-size:13px; text-decoration:none; color:var(--color-accent-700); border-radius:10px; margin:2px 6px 6px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Log Out
+      </a>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 180, &quot;height&quot;: 44}, &quot;userName&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Jane Doe&quot;, &quot;tsType&quot;: &quot;string&quot;}, &quot;userEmail&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;jane.doe@example.com&quot;, &quot;tsType&quot;: &quot;string&quot;}, &quot;profileHref&quot;: {&quot;editor&quot;: null, &quot;default&quot;: &quot;Profile.dc.html&quot;, &quot;tsType&quot;: &quot;string&quot;}, &quot;logoutHref&quot;: {&quot;editor&quot;: null, &quot;default&quot;: &quot;Login.dc.html&quot;, &quot;tsType&quot;: &quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { open: false };
+
+  renderVals() {
+    const userName = this.props.userName ?? 'Jane Doe';
+    const userEmail = this.props.userEmail ?? 'jane.doe@example.com';
+    const initials = userName.split(' ').filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+
+    return {
+      userName,
+      userEmail,
+      initials,
+      isOpen: this.state.open,
+      toggleOpen: () => this.setState(s => ({ open: !s.open })),
+      profileHref: this.props.profileHref ?? 'Profile.dc.html',
+      logoutHref: this.props.logoutHref ?? 'Login.dc.html',
+    };
+  }
+}
+</script>
+</body>
+</html>

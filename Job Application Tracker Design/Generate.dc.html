@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta charset="utf-8">
+  <title>Tracker — Generate Report</title>
+  <link rel="stylesheet" href="_ds/modernist-edaf2adc-2368-4f9d-b4d3-44e6539866bb/styles.css">
+  <script src="_ds/modernist-edaf2adc-2368-4f9d-b4d3-44e6539866bb/_ds_bundle.js"></script>
+  <style>
+    body { margin: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    :root {
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --color-divider: color-mix(in srgb, #201e1d 18%, transparent);
+    }
+    .nav {
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      background: color-mix(in srgb, var(--color-bg) 75%, transparent);
+    }
+    .input, select.input, textarea.input {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    }
+    .card { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    .tag { border-radius: 999px; }
+    .hr { border-radius: 999px; }
+  </style>
+</helmet>
+
+<div style="{{ rootStyle }}">
+
+  <!-- Demo controls -->
+  <div style="display:flex; align-items:center; gap:24px; padding:10px 32px; background:var(--color-surface); border-bottom:1px solid var(--color-divider); flex-wrap:wrap;">
+    <span style="font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:color-mix(in srgb, var(--color-text) 55%, transparent); font-weight:800;">Demo controls</span>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-size:11px; color:color-mix(in srgb, var(--color-text) 60%, transparent);">Theme</span>
+      <div style="display:inline-flex; border:1px solid var(--color-divider);">
+        <button onClick="{{ setThemeLight }}" style="{{ themeLightStyle }}">Light</button>
+        <button onClick="{{ setThemeDark }}" style="{{ themeDarkStyle }}">Dark</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="nav" style="padding-left:32px; padding-right:32px;">
+    <span class="nav-brand">Tracker</span>
+    <a href="Dashboard.dc.html">Dashboard</a>
+    <a href="Add Application.dc.html">Applications</a>
+    <a href="Profile.dc.html">Profile</a>
+    <a href="#" aria-current="page">Generate</a>
+    <dc-import name="UserMenu" hint-size="180px,44px" style="margin-left:auto;"></dc-import>
+  </nav>
+
+  <div style="max-width:980px; margin:0 auto; padding:40px 32px 80px;">
+
+    <div style="margin-bottom:32px;">
+      <h2 style="margin-bottom:6px;">Create Your Custom Interview Plan</h2>
+      <p style="opacity:0.7; font-size:14px; margin:0;">Paste the job description and tell us about yourself — we'll match you against the role and build a tailored resume, interview questions, and a prep plan.</p>
+    </div>
+
+    <!-- Card -->
+    <div style="border-top:2px solid var(--color-divider); border-bottom:2px solid var(--color-divider);">
+
+      <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; align-items:flex-start; gap:14px; padding:80px 4px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 0.8s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+          <div style="font-family:var(--font-heading); font-weight:800; font-size:18px;">Analyzing job description and building your plan…</div>
+          <p style="margin:0; font-size:13px; opacity:0.65;">Matching your profile, generating a tailored resume, interview questions, and a prep plan. This takes about 30 seconds.</p>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid; grid-template-columns:1fr 1fr;">
+
+        <!-- Left panel: JD -->
+        <div style="border-right:1px solid var(--color-divider); padding:24px 24px 24px 4px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="0" ry="0"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            <h4 style="margin:0; font-size:16px;">Target Job Description</h4>
+            <span class="tag tag-outline" style="margin-left:auto;">Required</span>
+          </div>
+          <sc-if value="{{ showCompanyName }}" hint-placeholder-val="{{ true }}">
+            <div class="field" style="margin-bottom:14px;">
+              <label for="companyname">Company Name</label>
+              <input class="input" id="companyname" type="text" placeholder="e.g. Acme Corp" value="{{ companyName }}" onChange="{{ onCompanyNameChange }}">
+            </div>
+          </sc-if>
+          <textarea class="input" value="{{ jobDescription }}" onChange="{{ onJdChange }}" style="min-height:280px;" placeholder="Paste the full job description here — e.g. 'Senior Frontend Engineer at Acme requires proficiency in React, TypeScript, and large-scale system design...'" maxlength="5000"></textarea>
+          <div style="font-size:11px; opacity:0.55; margin-top:6px; text-align:right;">{{ jdCharCount }} / 5000 chars</div>
+        </div>
+
+        <!-- Right panel: profile -->
+        <div style="padding:24px 4px 24px 24px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <h4 style="margin:0; font-size:16px;">Your Profile</h4>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:8px;">
+              <label style="font-size:12px; color:color-mix(in srgb, var(--color-text) 70%, transparent);">Upload Resume</label>
+              <span class="tag tag-accent-2">Best Results</span>
+            </div>
+            <label for="resumefile" style="display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; border:1.5px dashed color-mix(in srgb, var(--color-divider) 70%, transparent); border-radius:16px; padding:24px 12px; cursor:pointer; background:color-mix(in srgb, var(--color-surface) 60%, transparent); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6;"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>
+              <span style="font-size:13px; font-weight:700;">{{ dropzoneLabel }}</span>
+              <span style="font-size:11px; opacity:0.55;">PDF or DOCX (Max 5MB)</span>
+              <input id="resumefile" type="file" accept=".pdf,.doc,.docx" onChange="{{ onFileChange }}" style="display:none;">
+            </label>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:10px; margin:16px 0; color:color-mix(in srgb, var(--color-text) 45%, transparent); font-size:11px; letter-spacing:0.08em;">
+            <span style="flex:1; height:1px; background:var(--color-divider);"></span>
+            OR
+            <span style="flex:1; height:1px; background:var(--color-divider);"></span>
+          </div>
+
+          <div class="field" style="margin-bottom:14px;">
+            <label for="selfdesc">Quick Self-Description</label>
+            <textarea class="input" id="selfdesc" value="{{ selfDescription }}" onChange="{{ onSelfDescChange }}" style="min-height:100px;" placeholder="Briefly describe your experience, key skills, and years of experience if you don't have a resume handy…"></textarea>
+          </div>
+
+          <div style="display:flex; gap:10px; padding:12px; background:var(--color-accent-100); font-size:12px; line-height:1.5;">
+            <span style="color:var(--color-accent-700); flex:none;">ⓘ</span>
+            <p style="margin:0; color:var(--color-accent-800);">Either a <strong>Resume</strong> or a <strong>Self-Description</strong> is required to generate a personalized plan.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 4px; border-top:1px solid var(--color-divider);">
+        <span style="font-size:12px; opacity:0.6;">AI-Powered Strategy Generation · Approx 30s</span>
+        <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+          <sc-if value="{{ showQuickAdd }}" hint-placeholder-val="{{ true }}">
+            <button class="btn btn-secondary" onClick="{{ quickAddApplication }}" disabled="{{ generateDisabled }}" style="white-space:nowrap;">
+              {{ quickAddLabel }}
+            </button>
+          </sc-if>
+          <button class="btn btn-primary" onClick="{{ startGenerate }}" disabled="{{ generateDisabled }}" style="white-space:nowrap;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"></path></svg>
+            Generate My Interview Strategy
+          </button>
+        </div>
+      </div>
+      </sc-if>
+
+    </div>
+
+    <!-- Recent reports -->
+    <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}">
+    <div style="margin-top:40px;">
+      <h6 style="color:color-mix(in srgb, var(--color-text) 55%, transparent); margin-bottom:14px;">My Recent Interview Plans</h6>
+      <div style="border-top:1px solid var(--color-divider);">
+        <sc-for list="{{ reports }}" as="report" hint-placeholder-count="6">
+          <a href="{{ report.linkHref }}" style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 16px; margin-bottom:8px; border-radius:14px; background:color-mix(in srgb, var(--color-surface) 88%, transparent); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid color-mix(in srgb, var(--color-divider) 55%, transparent); text-decoration:none; color:inherit; transition:box-shadow 0.15s ease;">
+            <div>
+              <div style="font-weight:700; font-size:14px;">{{ report.jobTitle }}</div>
+              <div style="font-size:12px; opacity:0.55; margin-top:2px;">Generated {{ report.dateLabel }}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; flex:none;">
+              <span class="tag" style="background:{{ report.scoreBg }}; color:{{ report.scoreText }}; border-radius:999px;">{{ report.matchScore }}% match</span>
+              <sc-if value="{{ linkReportsToDetail }}" hint-placeholder-val="{{ true }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.45;"><path d="M9 18l6-6-6-6"></path></svg>
+              </sc-if>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showCompanyName&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Job Description&quot;}, &quot;showQuickAdd&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Job Description&quot;}, &quot;linkReportsToDetail&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Recent Plans&quot;, &quot;description&quot;: &quot;Tapping a recent plan tile opens its full interview report detail page&quot;}}">
+function segStyle(activeVal, val, isFirst) {
+  return {
+    padding: '6px 14px',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 800,
+    fontSize: '11px',
+    letterSpacing: '0.04em',
+    textTransform: 'uppercase',
+    cursor: 'pointer',
+    border: 'none',
+    borderLeft: isFirst ? 'none' : '1px solid var(--color-divider)',
+    background: activeVal === val ? 'var(--color-accent)' : 'transparent',
+    color: activeVal === val ? 'var(--color-bg)' : 'var(--color-text)',
+  };
+}
+
+function scoreMeta(score) {
+  if (score >= 80) return { bg: '#e6f5ec', text: '#14532d' };
+  if (score >= 60) return { bg: '#fdf1dd', text: '#7a4a06' };
+  return { bg: '#fff2ef', text: '#7c1405' };
+}
+
+const REPORTS = [
+  { jobTitle: 'Full Stack Engineer', dateLabel: 'Jul 1, 2026', matchScore: 82, href: 'Report.dc.html' },
+  { jobTitle: 'Senior Frontend Engineer', dateLabel: 'Jun 24, 2026', matchScore: 74, href: 'Report.dc.html' },
+  { jobTitle: 'Backend Engineer, Platform', dateLabel: 'Jun 18, 2026', matchScore: 88, href: 'Report.dc.html' },
+  { jobTitle: 'Product Manager, Growth', dateLabel: 'Jun 9, 2026', matchScore: 65, href: 'Report.dc.html' },
+  { jobTitle: 'DevOps Engineer', dateLabel: 'May 30, 2026', matchScore: 79, href: 'Report.dc.html' },
+  { jobTitle: 'Engineering Manager', dateLabel: 'May 20, 2026', matchScore: 70, href: 'Report.dc.html' },
+];
+
+class Component extends DCLogic {
+  state = { theme: 'light', phase: 'idle', jobDescription: '', selfDescription: '', fileName: '', companyName: '', quickAdded: false };
+  timer = null;
+
+  quickAddApplication() {
+    if (this.state.quickAdded) return;
+    this.setState({ quickAdded: true });
+    setTimeout(() => this.setState({ quickAdded: false }), 2200);
+  }
+
+  componentWillUnmount() {
+    if (this.timer) clearTimeout(this.timer);
+  }
+
+  startGenerate() {
+    if (this.state.phase === 'loading') return;
+    this.setState({ phase: 'loading' });
+    this.timer = setTimeout(() => {
+      window.location.href = 'Report.dc.html';
+    }, 1500);
+  }
+
+  renderVals() {
+    const isDark = this.state.theme === 'dark';
+    const rootStyle = isDark
+      ? { '--color-bg': '#17161b', '--color-surface': '#211f24', '--color-text': '#f2f0ef', background: 'var(--color-bg)', color: 'var(--color-text)', minHeight: '100vh' }
+      : { background: 'var(--color-bg)', color: 'var(--color-text)', minHeight: '100vh' };
+
+    const canGenerate = this.state.jobDescription.trim().length > 0 &&
+      (this.state.selfDescription.trim().length > 0 || !!this.state.fileName);
+
+    const dropzoneLabel = this.state.fileName ? `Selected: ${this.state.fileName}` : 'Click to upload or drag & drop';
+
+    const linkReportsToDetail = this.props.linkReportsToDetail ?? true;
+    const reports = REPORTS.map(r => {
+      const m = scoreMeta(r.matchScore);
+      return { ...r, scoreBg: m.bg, scoreText: m.text, linkHref: linkReportsToDetail ? r.href : '#' };
+    });
+
+    return {
+      rootStyle,
+      isIdle: this.state.phase === 'idle',
+      isLoading: this.state.phase === 'loading',
+      jobDescription: this.state.jobDescription,
+      selfDescription: this.state.selfDescription,
+      jdCharCount: this.state.jobDescription.length,
+      dropzoneLabel,
+      canGenerate,
+      generateDisabled: !canGenerate,
+      reports,
+      linkReportsToDetail,
+      showCompanyName: this.props.showCompanyName ?? true,
+      companyName: this.state.companyName,
+      onCompanyNameChange: (e) => this.setState({ companyName: e.target.value }),
+      showQuickAdd: this.props.showQuickAdd ?? true,
+      quickAddLabel: this.state.quickAdded ? 'Added ✓' : 'Quick Add as Applied',
+      quickAddApplication: () => this.quickAddApplication(),
+      onJdChange: (e) => this.setState({ jobDescription: e.target.value.slice(0, 5000) }),
+      onSelfDescChange: (e) => this.setState({ selfDescription: e.target.value }),
+      onFileChange: (e) => this.setState({ fileName: e.target.files && e.target.files[0] ? e.target.files[0].name : '' }),
+      startGenerate: () => this.startGenerate(),
+      themeLightStyle: segStyle(this.state.theme, 'light', true),
+      themeDarkStyle: segStyle(this.state.theme, 'dark', false),
+      setThemeLight: () => this.setState({ theme: 'light' }),
+      setThemeDark: () => this.setState({ theme: 'dark' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

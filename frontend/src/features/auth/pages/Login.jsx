@@ -1,85 +1,111 @@
-import { Link, Navigate, useNavigate } from "react-router";
-import { useAuth } from "../hooks/useAuth";
-import { useState } from "react";
+import { Link, Navigate, useNavigate } from 'react-router';
+import { useAuth } from '../hooks/useAuth';
+import { useState } from 'react';
+import PageSkeleton from '../../../components/ui/PageSkeleton';
+import Button from '../../../components/ui/Button';
+import Input from '../../../components/ui/Input';
+import FormField from '../../../components/ui/FormField';
 
 const Login = () => {
-  const [userName, setuserName] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const { user, loading, handleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleLogin({ username: userName, password });
-    console.log("handle submit form login");
-    navigate("/");
+    setError('');
+
+    if (!email.trim()) {
+      setError('Please enter your email.');
+      return;
+    }
+
+    if (!password.trim()) {
+      setError('Please enter your password.');
+      return;
+    }
+
+    try {
+      const res = await handleLogin({ username: email, password });
+
+      if (res?.success === true) {
+        navigate('/dashboard');
+      } else if (res?.success === false) {
+        setError(res?.message || 'Login failed. Please check your credentials.');
+      } else {
+        // handleLogin might return undefined on error due to catch block
+        setError('Login failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(
+        err?.response?.data?.message ||
+        err?.message ||
+        'Login failed. Please check your credentials and try again.'
+      );
+    }
   };
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <PageSkeleton />;
   }
 
   if (user) {
-    return <Navigate to={"/"} />;
+    return <Navigate to="/dashboard" />;
   }
 
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen gap-4 ">
-      {/* heading */}
-      <div className="flex justify-center items-center bg-amber-100 rounded-xl m-3 p-5! w-full max-w-sm">
-        <h3 className="text-2xl text-blue-400">Login</h3>
-      </div>
-      <form onSubmit={handleSubmit}>
-        {/* main container div */}
-        <div className="flex flex-col justify-center gap-4">
-          {/* // username */}
-          <div className="flex gap-2 justify-between">
-            <label htmlFor="username" id="username">
-              username
-            </label>
-            <input
-              className="p-2 bg-gray-100 text-black border-0 focus:outline-none focus:ring-1 rounded-md"
-              id="username"
-              type="text"
-              placeholder="Enter userName"
-              onChange={(e) => {
-                setuserName(e.target.value);
-              }}
-            />
-          </div>
-          {/* password */}
-          <div className="flex gap-2 justify-between">
-            <label htmlFor="password" id="password">
-              password
-            </label>
-            <input
-              className="p-2 border-none bg-gray-100 text-black focus:outline-none focus:ring-1 rounded-md"
-              id="password"
-              type="password"
-              placeholder="Enter Password"
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-            />
-          </div>
-
-          <button
-            onClick={(e) => handleSubmit(e)}
-            className="bg-blue-500 p-2! rounded-md shadow-md transition duration-150 ease-in-out hover:bg-blue-600 hover:shadow-lg active:scale-95 active:shadow-sm"
-          >
-            Login
-          </button>
-        </div>
-      </form>
-      <p>
-        Don't Have a Account?{" "}
-        <Link
-          className="cursor-pointer hover:text-blue-200 underline"
-          to="/register"
-        >
-          register
+    <div className="bg-bg text-text min-h-screen flex flex-col">
+      <nav className="backdrop-blur-md bg-bg/75 border-b border-divider px-6 py-3 flex items-center">
+        <span className="font-bold text-lg">Tracker</span>
+        <Link to="/register" className="ml-auto text-sm text-text hover:text-accent transition-colors">
+          Don't have an account? Register
         </Link>
-      </p>
+      </nav>
+
+      <div className="flex-1 flex items-center justify-center px-6 py-10">
+        <div className="w-full max-w-[420px]">
+          <h6 className="text-accent text-xs font-semibold uppercase mb-1.5">Welcome back</h6>
+          <h2 className="text-2xl font-bold mb-1.5">Log In</h2>
+          <p className="text-sm opacity-70 mb-8">
+            Log in to track applications and generate tailored reports.
+          </p>
+
+          <div className="space-y-5 border-t border-divider pt-6">
+            <FormField label="Email" htmlFor="login-email">
+              <Input
+                id="login-email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </FormField>
+
+            <FormField label="Password" htmlFor="login-password">
+              <Input
+                id="login-password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </FormField>
+
+            {error && <div className="text-xs text-status-rejected bg-status-rejected/10 p-3 rounded-md">{error}</div>}
+
+            <Button variant="primary" onClick={handleSubmit} className="w-full">
+              Log In
+            </Button>
+
+            <Link to="#" className="text-xs text-accent hover:underline">
+              Forgot password?
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

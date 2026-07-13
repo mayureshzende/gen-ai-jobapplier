@@ -9,30 +9,36 @@ import blackListModel from "../models/blacklist.mode.js";
  * @access Public
  */
 const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
-
-  if (!username || !email || !password) {
-    return res.status(400).json({
-      message: "please Provide required details",
-      success: false,
-    });
-  }
-
   try {
+    const { username, email, password } = req.body;
+
+    // Validate input
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username, email, and password are required",
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters long",
+      });
+    }
+
+    // Check if user already exists
     const userFound = await userModel.findOne({
       $or: [{ username }, { email }],
     });
     if (userFound) {
-      return res.status(400).json({
-        message: "User already exists, with username and emailID",
+      return res.status(409).json({
         success: false,
+        message: "Username or email already in use",
       });
     }
-  } catch (error) {
-    console.error(error);
-  }
 
-  try {
+    // Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await userModel.create({
       username,
@@ -40,23 +46,35 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = await jwtToken.sign(
+    // Generate token
+    const token = jwtToken.sign(
       {
         id: user._id,
         username,
         email,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" },
+      { expiresIn: "1d" }
     );
-    res.cookie("token", token);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Registration error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Registration failed. Please try again",
+    });
   }
-  return res.status(201).json({
-    message: "User created successFully",
-    success: true,
-  });
 };
 
 /**
@@ -65,50 +83,60 @@ const registerUser = async (req, res) => {
  * @access public
  */
 const loginUser = async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    return res.status(400).json({
-      message: "please enter the rquired fields",
-      success: false,
-    });
-  }
-
-  console.log("user name is ", username);
   try {
-    const user = await userModel.findOne({ username });
-    console.log("---> ", user);
-    if (!user) {
+    const { username, password } = req.body;
+
+    // Validate input
+    if (!username || !password) {
       return res.status(400).json({
-        message:
-          "The user is not found, please register, or check the username/Email",
         success: false,
+        message: "Username and password are required",
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Find user
+    const user = await userModel.findOne({ username });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid username or password",
+      });
+    }
 
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({
-        message: "The username or password is not correct",
         success: false,
+        message: "Invalid username or password",
       });
     }
 
-    const token = await jwtToken.sign(
-      { id: user._id, username },
+    // Generate token
+    const token = jwtToken.sign(
+      { id: user._id, username, email: user.email },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "1d",
-      },
+      { expiresIn: "1d" }
     );
-    res.cookie("token", token);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Login error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Login failed. Please try again",
+    });
   }
-  return res.status(200).json({
-    message: "Login succesfull",
-    success: true,
-  });
 };
 
 /**
@@ -117,24 +145,36 @@ const loginUser = async (req, res) => {
  * @acces public
  */
 const logoutUser = async (req, res) => {
-  const token = req?.cookies?.token || null;
+  try {
+    const token = req?.cookies?.token;
 
-  if (!token) {
-    res.status(400).json({
-      message: "user token is not present",
+    if (token) {
+      // Add token to blacklist
+      try {
+        await blackListModel.create({ token });
+      } catch (error) {
+        console.error("Error adding token to blacklist:", error);
+      }
+    }
+
+    // Clear cookie
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({
       success: false,
+      message: "Logout failed",
     });
   }
-
-  try {
-    await blackListModel.create({ token });
-  } catch (error) {
-    console.error(error);
-  }
-  res.clearCookie("token");
-  return res
-    .status(200)
-    .json({ message: "user LoggedOut successFully", success: true });
 };
 
 /**
@@ -148,9 +188,10 @@ const getMe = (req, res) => {
   const user = {
     id: userDetails.id,
     username: userDetails.username,
+    email: userDetails.email,
   };
   return res.status(200).json({
-    message: "user details fetched successFully",
+    message: "user details fetched successfully",
     success: true,
     user: user,
   });

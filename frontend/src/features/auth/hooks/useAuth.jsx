@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../state/AuthContext";
 import {
   getMe,
@@ -10,22 +10,40 @@ import {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   const { user, setuser, loading, setloading } = context;
+  const hasRunRef = useRef(false);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (hasRunRef.current) return;
+    hasRunRef.current = true;
+
     const getMeUser = async () => {
       try {
         setloading(true);
         const userres = await getMe();
-        console.log("user response is ", userres);
-        setuser(userres);
+        if (mountedRef.current) {
+          // Extract user object from response
+          setuser(userres?.user || userres);
+        }
       } catch (error) {
         console.error(error);
+        if (mountedRef.current) {
+          setloading(false);
+        }
       } finally {
-        setloading(false);
+        if (mountedRef.current) {
+          setloading(false);
+        }
       }
     };
     getMeUser();
-  }, []);
+  }, [setloading, setuser]);
 
   const handleRegister = async ({
     username,
@@ -41,11 +59,14 @@ export const useAuth = () => {
         password,
         confirmpassword,
       });
-      return registeruser.data;
+      return registeruser;
     } catch (error) {
       console.error(error);
+      throw error;
     } finally {
-      setloading(false);
+      if (mountedRef.current) {
+        setloading(false);
+      }
     }
   };
 
@@ -53,22 +74,44 @@ export const useAuth = () => {
     try {
       setloading(true);
       const loginuser = await login({ username, password });
-      return loginuser.data;
+
+      // Fetch user details after successful login
+      if (loginuser?.success && mountedRef.current) {
+        try {
+          const userDetails = await getMe();
+          if (mountedRef.current) {
+            setuser(userDetails?.user || userDetails);
+          }
+        } catch (err) {
+          console.error("Failed to fetch user details:", err);
+        }
+      }
+
+      return loginuser;
     } catch (error) {
       console.error(error);
+      throw error;
     } finally {
-      setloading(false);
+      if (mountedRef.current) {
+        setloading(false);
+      }
     }
   };
 
   const handleLogout = async () => {
     try {
       const logoutuser = await logout();
-      return logoutuser.data;
+      if (mountedRef.current) {
+        setuser(null);
+      }
+      return logoutuser;
     } catch (error) {
       console.error(error);
+      throw error;
     } finally {
-      setloading(false);
+      if (mountedRef.current) {
+        setloading(false);
+      }
     }
   };
 

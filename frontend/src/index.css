@@ -5,17 +5,61 @@
   margin: 0px;
   box-sizing: border-box;
 }
+@import "tailwindcss";
 
-@theme {
-  /* 1. Define your custom background color variable */
-  --color-brand-bg: #1f232a;
-  --color-text-primary: cornsilk;
+/* 1. Semantic tokens — these are the ones that SWITCH between themes */
+:root {
+  --color-bg: #f8f9fb;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f1f3f7;
+  --color-divider: #e3e6ed;
+  --color-text: #1a1d29;
+  --color-text-secondary: #6b7280;
+  --color-accent: #4f46e5;
+  --color-accent-hover: #4338ca;
+
+  --status-saved: #9ca3af;
+  --status-applied: #3b82f6;
+  --status-interview: #f59e0b;
+  --status-offer: #10b981;
+  --status-rejected: #ef4444;
 }
 
-@layer base {
-  /* 2. Apply it globally to the body element */
-  body {
-    background-color: var(--color-brand-bg);
-    color: var(--color-text-primary);
-  }
+[data-theme="dark"] {
+  --color-bg: #0f1117;
+  --color-surface: #1a1d27;
+  --color-surface-alt: #22252f;
+  --color-divider: #2c2f3a;
+  --color-text: #f0f1f5;
+  --color-text-secondary: #9ca3af;
+  --color-accent: #818cf8;
+  --color-accent-hover: #6366f1;
+
+  --status-saved: #6b7280;
+  --status-applied: #60a5fa;
+  --status-interview: #fbbf24;
+  --status-offer: #34d399;
+  --status-rejected: #f87171;
+}
+
+/* 2. Map semantic tokens into Tailwind's theme so it generates utilities */
+@theme {
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-alt: var(--color-surface-alt);
+  --color-divider: var(--color-divider);
+  --color-text: var(--color-text);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+
+  --color-status-saved: var(--status-saved);
+  --color-status-applied: var(--status-applied);
+  --color-status-interview: var(--status-interview);
+  --color-status-offer: var(--status-offer);
+  --color-status-rejected: var(--status-rejected);
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
 }

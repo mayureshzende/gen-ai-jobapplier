@@ -1,25 +1,16 @@
-import axios from "axios";
+import apiClient from "../../../lib/apiClient";
 
-const apiClient = axios.create({
-  baseURL: "http://localhost:3000",
-  withCredentials: true,
-});
-export const register = async ({
-  username,
-  email,
-  password,
-  confirmPassword,
-}) => {
+export const register = async ({ username, email, password }) => {
   try {
     const res = await apiClient.post("/api/auth/register", {
       username,
       email,
       password,
-      confirmPassword,
     });
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -29,6 +20,7 @@ export const login = async ({ username, password }) => {
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -38,15 +30,16 @@ export const logout = async () => {
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
 export const getMe = async () => {
   try {
-    const res = await apiClient.post("api/auth/getMe", {});
-    console.log("fetched user data ", res);
+    const res = await apiClient.post("/api/auth/getMe", {});
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };

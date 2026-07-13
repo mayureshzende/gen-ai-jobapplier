@@ -16,6 +16,10 @@ const authUserMiddleware = async (req, res, next) => {
     next();
   } catch (err) {
     console.error("user authentication error ", err);
+    return res.status(401).json({
+      success: false,
+      message: "please login again. session expired.",
+    });
   }
 };
 export default authUserMiddleware;

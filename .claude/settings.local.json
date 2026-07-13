@@ -3,7 +3,11 @@
     "allow": [
       "PowerShell(git config *)",
       "PowerShell(Out-Null *)",
-      "PowerShell(winget *)"
+      "PowerShell(winget *)",
+      "Skill(update-config)",
+      "Skill(code-review)",
+      "Artifact",
+      "Bash(npm run *)"
     ]
   }
 }
