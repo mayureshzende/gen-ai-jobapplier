@@ -16,13 +16,18 @@ const InterviewReport = () => {
   const [error, setError] = useState(interviewId ? '' : 'No report ID provided');
 
   useEffect(() => {
+    console.log("[InterviewReport] useEffect - interviewId:", interviewId, "report:", report?._id);
     if (!interviewId) {
+      console.log("[InterviewReport] No interviewId, skipping fetch");
       return;
     }
+    console.log("[InterviewReport] Fetching report for id:", interviewId);
     getReportbyId(interviewId).catch((err) => {
+      console.error("[InterviewReport] Error fetching report:", err);
       setError(err?.message || 'Failed to load report');
     });
-  }, [interviewId, getReportbyId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [interviewId]);
 
   const handleDownloadPDF = async () => {
     if (!interviewId) {
@@ -82,14 +87,14 @@ const InterviewReport = () => {
         {/* Header */}
         <div className="flex items-start justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold">{report.jobTitle}</h1>
+            <h1 className="text-3xl font-bold">{report?.jobTitle || 'Interview Report'}</h1>
             <p className="text-sm text-text-secondary">
               Generated {reportDate}
             </p>
           </div>
           <div className="text-right">
-            <div className="text-4xl font-bold mb-2" style={{ color: `var(${scoreMeta(report.matchScore)})` }}>
-              {report.matchScore}%
+            <div className="text-4xl font-bold mb-2" style={{ color: `var(${report?.matchScore ? scoreMeta(report.matchScore) : 'var(--color-text)'})` }}>
+              {report?.matchScore || 0}%
             </div>
             <Button variant="primary" onClick={handleDownloadPDF} disabled={downloading}>
               {downloading ? 'Preparing...' : 'Download Resume'}
@@ -98,32 +103,40 @@ const InterviewReport = () => {
         </div>
 
         {/* Profile & Job Description */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <Card elevation="sm">
-            <Card.Kicker>Profile Summary Used</Card.Kicker>
-            <Card.Body className="text-xs mt-2">{report.profileSummary}</Card.Body>
-          </Card>
-          <Card elevation="sm">
-            <Card.Kicker>Job Description</Card.Kicker>
-            <Card.Body className="text-xs mt-2">{report.jobDescription?.substring(0, 300)}...</Card.Body>
-          </Card>
-        </div>
+        {(report?.profileSummary || report?.jobDescription) && (
+          <div className="grid grid-cols-2 gap-4 mb-8">
+            {report?.profileSummary && (
+              <Card elevation="sm">
+                <Card.Kicker>Profile Summary Used</Card.Kicker>
+                <Card.Body className="text-xs mt-2">{report.profileSummary}</Card.Body>
+              </Card>
+            )}
+            {report?.jobDescription && (
+              <Card elevation="sm">
+                <Card.Kicker>Job Description</Card.Kicker>
+                <Card.Body className="text-xs mt-2">{report.jobDescription.substring(0, 300)}...</Card.Body>
+              </Card>
+            )}
+          </div>
+        )}
 
         {/* Generated Resume */}
-        <div className="mb-8">
-          <button
-            onClick={() => setResumeOpen(!resumeOpen)}
-            className="flex items-center gap-2 font-semibold text-sm mb-4 text-text hover:text-accent transition-colors"
-          >
-            <span>{resumeOpen ? '▼' : '▶'}</span>
-            Generated Resume
-          </button>
-          {resumeOpen && (
-            <Card elevation="sm">
-              <pre className="text-xs whitespace-pre-wrap font-mono overflow-hidden">{report.resume?.substring(0, 500)}...</pre>
-            </Card>
-          )}
-        </div>
+        {report?.resume && (
+          <div className="mb-8">
+            <button
+              onClick={() => setResumeOpen(!resumeOpen)}
+              className="flex items-center gap-2 font-semibold text-sm mb-4 text-text hover:text-accent transition-colors"
+            >
+              <span>{resumeOpen ? '▼' : '▶'}</span>
+              Generated Resume
+            </button>
+            {resumeOpen && (
+              <Card elevation="sm">
+                <pre className="text-xs whitespace-pre-wrap font-mono overflow-hidden">{report.resume.substring(0, 500)}...</pre>
+              </Card>
+            )}
+          </div>
+        )}
 
         {/* Skill Gaps */}
         {report.skillGaps && report.skillGaps.length > 0 && (

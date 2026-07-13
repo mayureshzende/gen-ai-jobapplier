@@ -45,14 +45,22 @@ const UserMenu = () => {
       </button>
 
       {open && (
-        <div className="absolute top-[calc(100%+8px)] right-0 min-w-[210px] rounded-lg border border-divider/60 bg-surface/90 backdrop-blur-md shadow-lg overflow-hidden z-20">
-          <div className="p-3 border-b border-divider/40">
-            <div className="font-bold text-sm text-text">{userName}</div>
+        <div
+          className="absolute top-[calc(100%+8px)] right-0 min-w-[210px] rounded-lg border shadow-lg overflow-hidden z-20"
+          style={{
+            borderColor: 'var(--color-divider)',
+            backgroundColor: 'var(--color-surface)',
+            backdropFilter: 'blur(12px)',
+          }}
+        >
+          <div className="p-3 border-b" style={{ borderColor: 'var(--color-divider)' }}>
+            <div className="font-bold text-sm">{userName}</div>
           </div>
           <Link
             to="/profile"
             onClick={() => setOpen(false)}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-text hover:bg-text/5 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm hover:opacity-80 transition-colors"
+            style={{ color: 'var(--color-text)' }}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -61,7 +69,11 @@ const UserMenu = () => {
           </Link>
           <button
             onClick={handleLogoutClick}
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-status-rejected hover:bg-status-rejected/10 transition-colors border-t border-divider/40"
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:opacity-80 transition-colors border-t"
+            style={{
+              borderColor: 'var(--color-divider)',
+              color: 'var(--status-rejected)',
+            }}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

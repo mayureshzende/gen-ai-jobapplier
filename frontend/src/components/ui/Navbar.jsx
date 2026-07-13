@@ -10,26 +10,28 @@ const Navbar = ({ children }) => {
 
   return (
     <>
-      <nav className="sticky top-0 z-10 backdrop-blur-md bg-opacity-75 border-b px-6 py-3 flex items-center gap-4" style={{ borderColor: 'var(--color-divider)' }}>
-        <Link to="/dashboard" className="font-bold text-lg hover:text-accent transition-colors">
-          Tracker
-        </Link>
+      <nav className="sticky top-0 z-10 backdrop-blur-md bg-opacity-75 border-b px-6 py-3 flex items-center justify-between" style={{ borderColor: 'var(--color-divider)' }}>
+        <div className="flex items-center gap-8">
+          <Link to="/dashboard" className="font-bold text-lg hover:text-accent transition-colors">
+            Tracker
+          </Link>
 
-        <div className="flex items-center gap-6 ml-8">
-          {NavContents.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `text-sm font-medium transition-colors ${isActive ? 'text-accent' : ''}`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
+          <div className="flex items-center gap-6">
+            {NavContents.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `text-sm font-medium transition-colors ${isActive ? 'text-accent' : ''}`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
         </div>
 
-        <div className="ml-auto flex items-center gap-3">
+        <div className="flex items-center gap-3">
           <Button
             as={Link}
             to="/applications"
