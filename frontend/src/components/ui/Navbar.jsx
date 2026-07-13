@@ -10,8 +10,8 @@ const Navbar = ({ children }) => {
 
   return (
     <>
-      <nav className="sticky top-0 z-10 backdrop-blur-md bg-bg/75 border-b border-divider px-6 py-3 flex items-center gap-4">
-        <Link to="/dashboard" className="font-bold text-lg text-text hover:text-accent transition-colors">
+      <nav style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-divider)', color: 'var(--color-text)' }} className="sticky top-0 z-10 backdrop-blur-md bg-opacity-75 border-b px-6 py-3 flex items-center gap-4">
+        <Link to="/dashboard" style={{ color: 'var(--color-text)' }} className="font-bold text-lg hover:text-accent transition-colors">
           Tracker
         </Link>
 
@@ -21,8 +21,11 @@ const Navbar = ({ children }) => {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `text-sm font-medium transition-colors ${isActive ? 'text-accent' : 'text-text hover:text-accent'}`
+                `text-sm font-medium transition-colors ${isActive ? '' : ''}`
               }
+              style={({ isActive }) => ({
+                color: isActive ? 'var(--color-accent)' : 'var(--color-text)',
+              })}
             >
               {item.label}
             </NavLink>
@@ -42,8 +45,8 @@ const Navbar = ({ children }) => {
           <Button
             variant="icon"
             onClick={toggleTheme}
-            className="text-text"
             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+            style={{ color: 'var(--color-text)' }}
           >
             {theme === 'dark' ? (
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -59,7 +62,7 @@ const Navbar = ({ children }) => {
           <UserMenu />
         </div>
       </nav>
-      <main>{children}</main>
+      <main style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}>{children}</main>
     </>
   );
 };

@@ -68,23 +68,23 @@ const Register = () => {
   }
 
   return (
-    <div className="bg-bg text-text min-h-screen flex flex-col">
-      <nav className="backdrop-blur-md bg-bg/75 border-b border-divider px-6 py-3 flex items-center">
+    <div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }} className="min-h-screen flex flex-col">
+      <nav style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-divider)' }} className="backdrop-blur-md bg-opacity-75 border-b px-6 py-3 flex items-center">
         <span className="font-bold text-lg">Tracker</span>
-        <Link to="/login" className="ml-auto text-sm text-text hover:text-accent transition-colors">
+        <Link to="/login" style={{ color: 'var(--color-text)' }} className="ml-auto text-sm hover:text-accent transition-colors">
           Already have an account? Log In
         </Link>
       </nav>
 
       <div className="flex-1 flex items-center justify-center px-6 py-10">
         <div className="w-full max-w-[420px]">
-          <h6 className="text-accent text-xs font-semibold uppercase mb-1.5">Get started</h6>
+          <h6 style={{ color: 'var(--color-accent)' }} className="text-xs font-semibold uppercase mb-1.5">Get started</h6>
           <h2 className="text-2xl font-bold mb-1.5">Create Account</h2>
-          <p className="text-sm opacity-70 mb-8">
+          <p style={{ color: 'var(--color-text-secondary)' }} className="text-sm mb-8">
             Track applications and generate tailored resumes and cover letters.
           </p>
 
-          <div className="space-y-5 border-t border-divider pt-6">
+          <div style={{ borderColor: 'var(--color-divider)' }} className="space-y-5 border-t pt-6">
             <FormField label="Username" htmlFor="reg-username">
               <Input
                 id="reg-username"
@@ -105,7 +105,7 @@ const Register = () => {
               />
             </FormField>
 
-            <FormField label="Password" htmlFor="reg-password" hint="Minimum 8 characters">
+            <FormField label="Password" htmlFor="reg-password" hint="Minimum 6 characters">
               <Input
                 id="reg-password"
                 type="password"
@@ -115,13 +115,13 @@ const Register = () => {
               />
             </FormField>
 
-            {error && <div className="text-xs text-status-rejected bg-status-rejected/10 p-3 rounded-md">{error}</div>}
+            {error && <div style={{ color: 'var(--status-rejected)', backgroundColor: 'var(--status-rejected)' }} className="text-xs bg-opacity-10 p-3 rounded-md">{error}</div>}
 
             <Button variant="primary" onClick={handleSubmit} className="w-full">
               Create Account
             </Button>
 
-            <p className="text-[11px] text-text-secondary">
+            <p style={{ color: 'var(--color-text-secondary)' }} className="text-[11px]">
               By creating an account you agree to the Terms of Service and Privacy Policy.
             </p>
           </div>

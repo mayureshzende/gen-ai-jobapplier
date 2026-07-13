@@ -13,8 +13,13 @@ const Textarea = React.forwardRef(
     ref
   ) => {
     const baseClasses =
-      'w-full min-h-[90px] px-2.5 py-1.5 text-sm rounded-md bg-surface/90 backdrop-blur-sm border border-divider text-text placeholder:text-text-secondary hover:border-text/45 focus:outline-none focus-visible:border-accent focus-visible:ring-1 focus-visible:ring-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed resize-y';
-    const invalidClass = invalid ? 'border-status-rejected' : '';
+      'w-full min-h-[90px] px-2.5 py-1.5 text-sm rounded-md backdrop-blur-sm border transition-colors disabled:opacity-50 disabled:cursor-not-allowed resize-y';
+    const baseStyle = {
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      borderColor: 'var(--color-divider)',
+      color: 'var(--color-text)',
+    };
+    const invalidStyle = invalid ? { borderColor: 'var(--status-rejected)' } : {};
 
     return (
       <textarea
@@ -22,7 +27,8 @@ const Textarea = React.forwardRef(
         placeholder={placeholder}
         disabled={disabled}
         rows={rows}
-        className={`${baseClasses} ${invalidClass} ${className}`}
+        style={{ ...baseStyle, ...invalidStyle }}
+        className={`${baseClasses} ${className} placeholder:text-text-secondary hover:border-text/45 focus-visible:border-accent focus-visible:ring-1 focus-visible:ring-accent`}
         {...rest}
       />
     );

@@ -1,11 +1,29 @@
 import React from 'react';
 
-const variantClasses = {
-  accent: 'bg-accent/10 text-accent',
-  'accent-2': 'bg-accent-2/10 text-accent-2',
-  neutral: 'bg-surface-alt text-text-secondary',
-  outline: 'border border-accent text-accent bg-transparent',
-  status: '',
+const getVariantStyle = (variant) => {
+  switch (variant) {
+    case 'accent':
+      return {
+        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+        color: 'var(--color-accent)',
+      };
+    case 'neutral':
+      return {
+        backgroundColor: 'var(--color-surface-alt)',
+        color: 'var(--color-text-secondary)',
+      };
+    case 'outline':
+      return {
+        borderColor: 'var(--color-accent)',
+        color: 'var(--color-accent)',
+        backgroundColor: 'transparent',
+        border: '1px solid',
+      };
+    case 'status':
+      return {};
+    default:
+      return {};
+  }
 };
 
 const sizeClasses = {
@@ -27,16 +45,15 @@ const Tag = React.forwardRef(
     ref
   ) => {
     const baseClasses = 'inline-flex items-center rounded-full tracking-wide leading-normal font-medium';
-    const variantClass = variantClasses[variant] || variantClasses.neutral;
     const sizeClass = sizeClasses[size] || sizeClasses.sm;
-    const combinedStyle =
-      variant === 'status' && inlineStyle ? inlineStyle : color ? { backgroundColor: color.bg, color: color.text } : {};
+    const borderClass = variant === 'outline' ? 'border' : '';
+    const variantStyle = variant === 'status' && inlineStyle ? inlineStyle : color ? { backgroundColor: color.bg, color: color.text } : getVariantStyle(variant);
 
     return (
       <span
         ref={ref}
-        className={`${baseClasses} ${variantClass} ${sizeClass} ${className}`}
-        style={combinedStyle}
+        className={`${baseClasses} ${borderClass} ${sizeClass} ${className}`}
+        style={variantStyle}
         {...rest}
       >
         {children}

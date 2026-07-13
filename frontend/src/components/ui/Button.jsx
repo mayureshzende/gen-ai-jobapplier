@@ -1,10 +1,32 @@
 import React from 'react';
 
-const variantClasses = {
-  primary: 'bg-accent text-white hover:bg-accent-hover active:bg-accent-hover',
-  secondary: 'border border-divider text-text hover:bg-text/5 active:bg-text/10 bg-transparent',
-  ghost: 'text-accent px-2 hover:bg-accent/10 active:bg-accent/15 bg-transparent',
-  icon: 'w-8.5 h-8.5 p-0',
+const getVariantStyle = (variant) => {
+  switch (variant) {
+    case 'primary':
+      return {
+        backgroundColor: 'var(--color-accent)',
+        color: 'white',
+      };
+    case 'secondary':
+      return {
+        borderColor: 'var(--color-divider)',
+        color: 'var(--color-text)',
+        backgroundColor: 'transparent',
+      };
+    case 'ghost':
+      return {
+        color: 'var(--color-accent)',
+        backgroundColor: 'transparent',
+      };
+    case 'icon':
+      return {
+        width: '34px',
+        height: '34px',
+        padding: '0',
+      };
+    default:
+      return {};
+  }
 };
 
 const sizeClasses = {
@@ -27,14 +49,16 @@ const Button = React.forwardRef(
   ) => {
     const baseClasses =
       'inline-flex items-center justify-center gap-1.5 rounded-md font-semibold cursor-pointer transition-colors disabled:opacity-45 disabled:cursor-not-allowed select-none';
-    const variantClass = variantClasses[variant] || variantClasses.secondary;
+    const variantStyle = getVariantStyle(variant);
     const sizeClass = sizeClasses[size] || sizeClasses.md;
+    const borderClass = variant === 'secondary' ? 'border' : '';
 
     return (
       <Component
         ref={ref}
         disabled={disabled}
-        className={`${baseClasses} ${variantClass} ${sizeClass} ${className}`}
+        style={variantStyle}
+        className={`${baseClasses} ${borderClass} ${sizeClass} ${className}`}
         {...rest}
       >
         {children}

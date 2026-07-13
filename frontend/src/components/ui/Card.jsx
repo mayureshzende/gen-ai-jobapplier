@@ -19,13 +19,18 @@ const Card = React.forwardRef(
     },
     ref
   ) => {
-    const baseClasses = 'flex flex-col gap-2 p-4 rounded-md bg-surface/90 backdrop-blur-sm border border-divider/60';
+    const baseClasses = 'flex flex-col gap-2 p-4 rounded-md backdrop-blur-sm border';
     const elevationClass = elevationClasses[elevation] || elevationClasses.none;
     const interactiveClass = interactive ? 'hover:shadow-md transition-shadow cursor-pointer' : '';
+    const baseStyle = {
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      borderColor: 'var(--color-divider)',
+    };
 
     return (
       <Component
         ref={ref}
+        style={baseStyle}
         className={`${baseClasses} ${elevationClass} ${interactiveClass} ${className}`}
         {...rest}
       >
@@ -38,7 +43,7 @@ const Card = React.forwardRef(
 Card.displayName = 'Card';
 
 const CardKicker = ({ children, className = '' }) => (
-  <span className={`text-[10px] tracking-widest uppercase text-accent ${className}`}>{children}</span>
+  <span style={{ color: 'var(--color-accent)' }} className={`text-[10px] tracking-widest uppercase ${className}`}>{children}</span>
 );
 
 const CardTitle = ({ children, className = '' }) => (
@@ -46,11 +51,11 @@ const CardTitle = ({ children, className = '' }) => (
 );
 
 const CardBody = ({ children, className = '' }) => (
-  <p className={`text-[13px] opacity-80 flex-1 m-0 ${className}`}>{children}</p>
+  <p style={{ color: 'var(--color-text-secondary)' }} className={`text-[13px] opacity-80 flex-1 m-0 ${className}`}>{children}</p>
 );
 
 const CardMeta = ({ children, className = '' }) => (
-  <div className={`flex items-center gap-1.5 text-[11px] text-text-secondary ${className}`}>{children}</div>
+  <div style={{ color: 'var(--color-text-secondary)' }} className={`flex items-center gap-1.5 text-[11px] ${className}`}>{children}</div>
 );
 
 Card.Kicker = CardKicker;

@@ -32,10 +32,8 @@ export const useAuth = () => {
           setuser(userres?.user || userres);
         }
       } catch (error) {
-        console.error(error);
-        if (mountedRef.current) {
-          setloading(false);
-        }
+        console.error("Auth check error:", error);
+        // User not logged in or session expired
       } finally {
         if (mountedRef.current) {
           setloading(false);
@@ -43,7 +41,8 @@ export const useAuth = () => {
       }
     };
     getMeUser();
-  }, [setloading, setuser]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleRegister = async ({
     username,

@@ -57,23 +57,23 @@ const Login = () => {
   }
 
   return (
-    <div className="bg-bg text-text min-h-screen flex flex-col">
-      <nav className="backdrop-blur-md bg-bg/75 border-b border-divider px-6 py-3 flex items-center">
+    <div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }} className="min-h-screen flex flex-col">
+      <nav style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-divider)' }} className="backdrop-blur-md bg-opacity-75 border-b px-6 py-3 flex items-center">
         <span className="font-bold text-lg">Tracker</span>
-        <Link to="/register" className="ml-auto text-sm text-text hover:text-accent transition-colors">
+        <Link to="/register" style={{ color: 'var(--color-text)' }} className="ml-auto text-sm hover:text-accent transition-colors">
           Don't have an account? Register
         </Link>
       </nav>
 
       <div className="flex-1 flex items-center justify-center px-6 py-10">
         <div className="w-full max-w-[420px]">
-          <h6 className="text-accent text-xs font-semibold uppercase mb-1.5">Welcome back</h6>
+          <h6 style={{ color: 'var(--color-accent)' }} className="text-xs font-semibold uppercase mb-1.5">Welcome back</h6>
           <h2 className="text-2xl font-bold mb-1.5">Log In</h2>
-          <p className="text-sm opacity-70 mb-8">
+          <p style={{ color: 'var(--color-text-secondary)' }} className="text-sm mb-8">
             Log in to track applications and generate tailored reports.
           </p>
 
-          <div className="space-y-5 border-t border-divider pt-6">
+          <div style={{ borderColor: 'var(--color-divider)' }} className="space-y-5 border-t pt-6">
             <FormField label="Email" htmlFor="login-email">
               <Input
                 id="login-email"
@@ -94,13 +94,13 @@ const Login = () => {
               />
             </FormField>
 
-            {error && <div className="text-xs text-status-rejected bg-status-rejected/10 p-3 rounded-md">{error}</div>}
+            {error && <div style={{ color: 'var(--status-rejected)', backgroundColor: 'var(--status-rejected)' }} className="text-xs bg-opacity-10 p-3 rounded-md">{error}</div>}
 
             <Button variant="primary" onClick={handleSubmit} className="w-full">
               Log In
             </Button>
 
-            <Link to="#" className="text-xs text-accent hover:underline">
+            <Link to="#" style={{ color: 'var(--color-accent)' }} className="text-xs hover:underline">
               Forgot password?
             </Link>
           </div>

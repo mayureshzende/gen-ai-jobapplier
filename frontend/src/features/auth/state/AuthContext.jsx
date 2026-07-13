@@ -8,7 +8,7 @@ const AuthContextProvider = ({ children }) => {
 
   const value = useMemo(() => {
     return { user, setuser, loading, setloading };
-  }, [user, loading, setuser, setloading]);
+  }, [user, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

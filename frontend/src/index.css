@@ -5,7 +5,6 @@
   margin: 0px;
   box-sizing: border-box;
 }
-@import "tailwindcss";
 
 /* 1. Semantic tokens — these are the ones that SWITCH between themes */
 :root {
